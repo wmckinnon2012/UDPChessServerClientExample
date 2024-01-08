@@ -322,7 +322,7 @@ class ChessBoard(tk.Tk):
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         # Bind the socket to a specific address and port
-        server_address = ('192.168.1.17', 12345)  # Change the IP and port as needed
+        server_address = ('127.0.0.1', 12345)  # Change the IP and port as needed
         server_socket.bind(server_address)
 
         print(f"UDP server is listening on {server_address}")
@@ -330,7 +330,7 @@ class ChessBoard(tk.Tk):
         try:
             while True:
                 # Receive data from the client
-                data, client_address = server_socket.recvfrom(1024)
+                data, client_address = server_socket.recvfrom(2048)
                 
                 # Process the received data
                 print(f"Received data from {client_address}: {data.decode('utf-8')}")
@@ -339,7 +339,11 @@ class ChessBoard(tk.Tk):
                 print(dataInp)
                 self.translate_command(dataInp)
                 #self.move_piece(1,1,2,2)
-                response = "Hello, client!"
+
+                sendString = ""
+                for state in self.boardState:
+                    sendString = sendString + str(state) + '§' + str(self.boardState[state]) + '&'
+                response = str(sendString)
                 server_socket.sendto(response.encode('utf-8'), client_address)
 
         except KeyboardInterrupt:
